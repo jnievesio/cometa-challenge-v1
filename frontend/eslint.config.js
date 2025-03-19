@@ -16,7 +16,7 @@ export default [
       globals: globals.browser, // Variables globales del navegador
       parser: tsESLintParser, // Usar el parser de TypeScript
       parserOptions: {
-        project: './tsconfig.json', // Usar el archivo tsconfig.json
+        project: './tsconfig.app.json', // Usar el archivo tsconfig.json
       },
     },
     plugins: {
