@@ -14,7 +14,7 @@ import {
 import { drinkService } from '../services/drinkService';
 import { AxiosError } from 'axios';
 import { orderService } from '../services/orderService';
-import { Item } from '../types/item';
+import { INewItem } from '../types/round';
 import { useState } from 'react';
 import { useNotifications } from '../contexts/NotificationContext';
 
@@ -26,11 +26,11 @@ interface AddItemModalProps {
 
 export function AddItemModal({ open, onClose, orderId }: AddItemModalProps) {
   const { showSuccess, showError } = useNotifications();
-  const { register, handleSubmit, reset } = useForm<Item>();
+  const { register, handleSubmit, reset } = useForm<INewItem>();
   const queryClient = useQueryClient();
 
   const addItemMutation = useMutation({
-    mutationFn: (item: Item) => orderService.addItem(orderId, item),
+    mutationFn: (item: INewItem) => orderService.addItem(orderId, item),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders', String(orderId)] });
       queryClient.invalidateQueries({ queryKey: ['orders'] });

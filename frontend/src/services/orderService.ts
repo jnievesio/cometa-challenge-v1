@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { IOrder } from '../types/order';
-import { Item } from '../types/item';
+import { INewItem } from '../types/round';
 import { API_URL } from '../config';
 
 export const orderService = {
@@ -19,7 +19,7 @@ export const orderService = {
     return data;
   },
 
-  addItem: async (orderId: number, item: Item): Promise<IOrder> => {
+  addItem: async (orderId: number, item: INewItem): Promise<IOrder> => {
     const { data } = await axios.post(`${API_URL}/orders/${orderId}/items`, item);
     return data;
   },

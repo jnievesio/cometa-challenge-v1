@@ -1,5 +1,5 @@
-import { Item } from './item';
-import { Round } from './round';
+import { IItem } from './item';
+import { IRound } from './round';
 
 export type IOrder = {
   id: number;
@@ -8,6 +8,6 @@ export type IOrder = {
   subtotal: number;
   taxes: number;
   discounts: number;
-  items: Item[];
-  rounds: Round[];
+  items: IItem[];
+  rounds: IRound[];
 };
