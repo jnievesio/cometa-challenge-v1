@@ -1,0 +1,31 @@
+# Excluir dependencias de ambos proyectos
+node_modules/
+__pycache__/
+.pytest_cache/
+venv/
+
+# Excluir archivos de entorno
+.env
+.env.local
+.env.development
+
+# Excluir archivos de sistema y editores
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Excluir logs y directorios de producción
+logs/
+*.log
+npm-debug.log*
+
+# Excluir carpetas de build
+/dist/
+/build/
+/out/
+
+# Mantener archivos de configuración necesarios
+!.env.example
+!.env.sample
