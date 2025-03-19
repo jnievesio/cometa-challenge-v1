@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { ThemeProvider as MUIThemeProvider } from '@mui/material';
-import { getTheme } from './theme'; // Updated import path
+import { getTheme } from '../theme/theme'; // Updated import path
 type ThemeMode = 'light' | 'dark';
 
 interface ThemeContextType {
