@@ -51,7 +51,7 @@ async def get_order_details(
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-# Endpoint para eliminar una orden
+# Endpoint para actualizar el estado
 @router.patch("/orders/{order_id}/pay", response_model=Order)
 async def mark_order_as_paid(
     order_id: int,
@@ -59,6 +59,7 @@ async def mark_order_as_paid(
 ):
     return order_service.mark_order_as_paid(order_id)
 
+# Endpoint para eliminar una orden
 @router.delete("/orders/{order_id}", response_model=Order)
 async def delete_order(
     order_id: int,

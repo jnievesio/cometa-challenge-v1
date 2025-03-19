@@ -24,10 +24,6 @@ export const orderService = {
     return data;
   },
 
-  updateOrder: async (order: IOrder) => {
-    const response = await axios.put(`${API_URL}/orders/${order.id}`, order);
-    return response.data;
-  },
   deleteOrder: async (orderId: number) => {
     const response = await axios.delete(`${API_URL}/orders/${orderId}`);
     return response.data;

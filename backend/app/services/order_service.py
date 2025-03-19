@@ -70,49 +70,6 @@ class OrderService:
                 return order
         raise ValueError("Order not found")
 
-    def update_order(self, order_id: int, updated_order: Order) -> Order:
-        old_order = self._find_order(order_id)
-        
-        # Revertir stock de la orden original
-        for item in old_order.items:
-            quantity_to_restore = int(item.total / item.price_per_unit)
-            self.stock_service.update_beer_quantity(item.name, quantity_to_restore)
-        
-        # Validar y aplicar nuevos cambios
-        # Recalcular items desde los rounds
-        updated_order.items = []
-        for ronda in updated_order.rounds:
-            for item_ronda in ronda.items:
-                beer = next((b for b in self.stock_service.get_stock().beers if b.name == item_ronda.name), None)
-                
-                if not beer or beer.quantity < item_ronda.quantity:
-                    self.update_order(order_id, old_order)
-                    raise ValueError(f"Stock insuficiente para {item_ronda.name}")
-                
-                # Actualizar stock temporalmente para cálculo
-                self.stock_service.update_beer_quantity(item_ronda.name, -item_ronda.quantity)
-                
-                # Actualizar items del pedido
-                existing_item = next((i for i in updated_order.items if i.name == item_ronda.name), None)
-                if existing_item:
-                    existing_item.total += beer.price * item_ronda.quantity
-                else:
-                    updated_order.items.append(Item(
-                        name=item_ronda.name,
-                        price_per_unit=beer.price,
-                        total=beer.price * item_ronda.quantity
-                    ))
-        
-        # Actualizar orden y stock
-        self.stock_service.get_stock().last_updated = datetime.now()
-        
-        # Recalcular subtotal
-        updated_order.subtotal = sum(item.total for item in updated_order.items)
-        
-
-        
-        return updated_order
-
     def mark_order_as_paid(self, order_id: int) -> Order:
         order = self._find_order(order_id)
         order.paid = True
