@@ -35,7 +35,7 @@ class OrderService:
         if not beer:
             raise ValueError("Bebida no existente")
         if beer.quantity < item.quantity:
-            raise ValueError("Insufficient stock")
+            raise ValueError("Insufficiente stock")
 
         # Crear nueva ronda
         new_round = Round(
