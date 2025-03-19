@@ -84,7 +84,11 @@ export function AddItemModal({ open, onClose, orderId }: AddItemModalProps) {
             label="Cantidad"
             margin="normal"
             inputProps={{ min: 1 }}
-            {...register('quantity', { valueAsNumber: true, required: true })}
+            {...register('quantity', {
+              valueAsNumber: true,
+              required: true,
+              validate: (value) => value > 0 || 'La cantidad debe ser mayor que 0',
+            })}
           />
           <DialogActions>
             <Button onClick={onClose}>Cancelar</Button>
