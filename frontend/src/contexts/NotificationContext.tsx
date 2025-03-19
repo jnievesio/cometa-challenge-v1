@@ -2,10 +2,12 @@ import { createContext, useContext, ReactNode, useState, forwardRef } from 'reac
 import { AlertColor, Snackbar } from '@mui/material';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+/* eslint-disable no-unused-vars */
 interface NotificationContextType {
   showMessage: (message: string, severity?: AlertColor) => void;
   showError: (message: string) => void;
   showSuccess: (message: string) => void;
+  /* eslint-enable no-unused-vars */
 }
 
 const NotificationContext = createContext<NotificationContextType>({
@@ -54,4 +56,5 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useNotifications = () => useContext(NotificationContext);

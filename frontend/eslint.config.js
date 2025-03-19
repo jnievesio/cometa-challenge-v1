@@ -7,7 +7,7 @@ import tsESLintParser from '@typescript-eslint/parser';
 import prettierPlugin from 'eslint-plugin-prettier';
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'vite.config.ts'] },
   js.configs.recommended,
   {
     files: ['**/*.{ts,tsx}'], // Aplicar estas reglas solo a archivos TypeScript
@@ -26,11 +26,15 @@ export default [
       prettier: prettierPlugin, // Plugin de Prettier
     },
     rules: {
-      '@typescript-eslint/no-unused-vars': 'warn', // Advertir sobre variables no usadas
       'react-hooks/rules-of-hooks': 'error', // Error en reglas de Hooks
       'react-hooks/exhaustive-deps': 'warn', // Advertir sobre dependencias de Hooks
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }], // Advertir sobre exportaciones no válidas
       'prettier/prettier': ['error', { endOfLine: 'auto' }], // Integración con Prettier
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_$', varsIgnorePattern: '^_$' }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_$', varsIgnorePattern: '^_$' },
+      ],
     },
   },
 ];

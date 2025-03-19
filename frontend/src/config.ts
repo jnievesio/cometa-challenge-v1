@@ -3,6 +3,7 @@ import config from '../../config.json';
 type Environment = 'development' | 'production';
 
 type ConfigType = {
+  /* eslint-disable-next-line no-unused-vars */
   [K in Environment]: {
     frontend: {
       url: string;
