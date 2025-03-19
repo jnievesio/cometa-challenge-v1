@@ -1,6 +1,7 @@
 # Excluir dependencias de ambos proyectos
 node_modules/
 __pycache__/
+backend/app/__init__.py
 .pytest_cache/
 venv/
 
