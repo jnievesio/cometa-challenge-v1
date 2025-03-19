@@ -14,7 +14,7 @@ INITIAL_ORDERS = [
         "id": 1,
         "created": datetime.now(),
         "paid": False,
-        "subtotal": 500,
+        "subtotal": 340,
         "taxes": 0,
         "discounts": 0,
         "items": [
