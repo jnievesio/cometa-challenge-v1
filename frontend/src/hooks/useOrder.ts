@@ -8,6 +8,8 @@ import {
 import { IOrder } from '../types/order';
 import { orderService } from '../services/orderService';
 import { useNotifications } from '../contexts/NotificationContext';
+import { INewItem } from '../types/round';
+import { AxiosError } from 'axios';
 
 export const ItemsKeys = {
   orders: () => ['orders'],
@@ -81,6 +83,29 @@ export function useDeleteOrderMutation(): UseMutationResult<IOrder, Error, numbe
     onError: () => {
       showError('Error al eliminar la orden - Intente nuevamente');
       showSuccess('Orden eliminada exitosamente');
+    },
+  });
+}
+
+export function useAddItemMutation(orderId: number, onClose?: () => void) {
+  const queryClient = useQueryClient();
+  const { showSuccess, showError } = useNotifications();
+
+  return useMutation<IOrder, AxiosError<{ detail?: string; message?: string }>, INewItem>({ 
+    mutationFn: async (newItem: INewItem) => {
+      return await orderService.addItem(orderId, newItem);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [key, orderId] });
+      queryClient.invalidateQueries({ queryKey: [key] });
+      showSuccess('Bebida agregada exitosamente');
+      if (onClose) {
+        onClose();
+      }
+    },
+    onError: (error) => {
+      const serverMessage = error.response?.data?.detail || error.response?.data?.message;
+      showError(serverMessage || 'Error al agregar la bebida');
     },
   });
 }

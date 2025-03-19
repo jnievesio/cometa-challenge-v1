@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   Dialog,
   DialogTitle,
@@ -8,15 +8,12 @@ import {
   Button,
   TextField,
   Box,
-  Alert,
   Autocomplete,
 } from '@mui/material';
 import { drinkService } from '../services/drinkService';
-import { AxiosError } from 'axios';
-import { orderService } from '../services/orderService';
 import { INewItem } from '../types/round';
-import { useState } from 'react';
 import { useNotifications } from '../contexts/NotificationContext';
+import { useAddItemMutation } from '../hooks/useOrder';
 
 interface AddItemModalProps {
   open: boolean;
@@ -25,23 +22,11 @@ interface AddItemModalProps {
 }
 
 export function AddItemModal({ open, onClose, orderId }: AddItemModalProps) {
-  const { showSuccess, showError } = useNotifications();
-  const { register, handleSubmit, reset } = useForm<INewItem>();
-  const queryClient = useQueryClient();
-
-  const addItemMutation = useMutation({
-    mutationFn: (item: INewItem) => orderService.addItem(orderId, item),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orders', String(orderId)] });
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-      onClose();
-      reset();
-      showSuccess('Bebida agregada exitosamente');
-    },
-    onError: (error: AxiosError<{ detail?: string; message?: string }>) => {
-      const serverMessage = error.response?.data?.detail || error.response?.data?.message;
-      showError(serverMessage || 'Error al agregar la bebida');
-    },
+  const { showError } = useNotifications();
+  const { register, handleSubmit, reset, setValue, watch } = useForm<INewItem>();
+  const addItemMutation = useAddItemMutation(orderId, () => {
+    onClose();
+    reset();
   });
 
   const { data: drinksData, isLoading } = useQuery({
@@ -49,18 +34,25 @@ export function AddItemModal({ open, onClose, orderId }: AddItemModalProps) {
     queryFn: drinkService.getDrinks,
   });
 
-  const [error, _] = useState<string>('');
+  const selectedDrink = watch('name');
+
+  const onSubmit = (data: INewItem) => {
+    if (!selectedDrink) {
+      showError('Debes seleccionar una bebida');
+      return;
+    }
+    if (!data.quantity || data.quantity < 1) {
+      showError('La cantidad debe ser al menos 1');
+      return;
+    }
+    addItemMutation.mutate(data);
+  };
 
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Agregar bebida</DialogTitle>
-      {error && (
-        <Alert severity="error" sx={{ mx: 3, mb: 2 }}>
-          {error}
-        </Alert>
-      )}
       <DialogContent>
-        <Box component="form" sx={{ pt: 2 }}>
+        <Box component="form" sx={{ pt: 2 }} onSubmit={handleSubmit(onSubmit)}>
           <Autocomplete
             options={drinksData || []}
             getOptionLabel={(option) => option.name}
@@ -82,7 +74,9 @@ export function AddItemModal({ open, onClose, orderId }: AddItemModalProps) {
                 }}
               />
             )}
-            onChange={(_, value) => value && reset({ name: value.name })}
+            onChange={(_, value) => {
+              setValue('name', value?.name || '');
+            }}
           />
           <TextField
             fullWidth
@@ -92,18 +86,14 @@ export function AddItemModal({ open, onClose, orderId }: AddItemModalProps) {
             inputProps={{ min: 1 }}
             {...register('quantity', { valueAsNumber: true, required: true })}
           />
+          <DialogActions>
+            <Button onClick={onClose}>Cancelar</Button>
+            <Button type="submit" variant="contained" disabled={addItemMutation.isLoading}>
+              Registrar
+            </Button>
+          </DialogActions>
         </Box>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button
-          onClick={handleSubmit((data) => addItemMutation.mutate(data))}
-          variant="contained"
-          disabled={addItemMutation.isLoading}
-        >
-          Registrar
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 }
