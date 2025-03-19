@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { UseQueryResult } from '@tanstack/react-query';
 import {
   Button,
   Table,
@@ -13,60 +13,37 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { AddItemModal } from '../components/AddItemModal';
-import { orderService } from '../services/orderService';
-import { useNotifications } from '../contexts/NotificationContext';
 import { useMediaQuery, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import {
+  useCreateOrderMutation,
+  useDeleteOrderMutation,
+  useGetOrders,
+  useMarkAsPaidMutation,
+} from '../hooks/useOrder';
+import { IOrder } from '../types/order';
 
 export default function OrderList() {
-  const { showSuccess, showError } = useNotifications();
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { data: orders = [] } = useQuery({
-    queryKey: ['orders'],
-    queryFn: orderService.getOrders,
-  });
+  const { data: orders = [] } = useGetOrders() as UseQueryResult<IOrder[], Error>;
 
-  const createOrderMutation = useMutation({
-    mutationFn: orderService.createOrder,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-      showSuccess('Orden creada exitosamente');
-    },
-  });
-
-  const deleteOrderMutation = useMutation({
-    mutationFn: orderService.deleteOrder,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-    },
-    onError: () => {
-      showError('Error al eliminar la orden - Intente nuevamente');
-      showSuccess('Orden eliminada exitosamente');
-    },
-  });
+  const { mutateAsync: createOrderMutation } = useCreateOrderMutation();
+  const { mutateAsync: deleteOrderMutation } = useDeleteOrderMutation();
 
   const handleDelete = (orderId: number) => {
     if (confirm('¿Está seguro que desea eliminar esta orden?')) {
-      deleteOrderMutation.mutate(orderId);
+      deleteOrderMutation(orderId);
     }
   };
 
-  const markAsPaidMutation = useMutation({
-    mutationFn: (orderId: number) => orderService.markOrderAsPaid(orderId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-      showSuccess('Orden marcada como pagada');
-    },
-    onError: () => showError('Error al actualizar el estado'),
-  });
+  const { mutateAsync: markAsPaidMutation } = useMarkAsPaidMutation();
 
   return (
     <>
@@ -103,7 +80,7 @@ export default function OrderList() {
         </Grid>
       )}
 
-      <Button variant="contained" onClick={() => createOrderMutation.mutate()} sx={{ mb: 2 }}>
+      <Button variant="contained" onClick={createOrderMutation} sx={{ mb: 2 }}>
         Nueva orden
       </Button>
 
@@ -144,7 +121,7 @@ export default function OrderList() {
                       <Button
                         variant="outlined"
                         color="success"
-                        onClick={() => markAsPaidMutation.mutate(order.id)}
+                        onClick={() => markAsPaidMutation(order.id)}
                         sx={{ width: '100%' }}
                       >
                         Marcar como pagada

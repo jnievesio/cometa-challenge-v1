@@ -1,9 +1,8 @@
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { IOrder as Order } from '../types/order';
+import { UseQueryResult } from '@tanstack/react-query';
+import { IOrder } from '../types/order';
 import { Typography, Button, Stack, Paper } from '@mui/material';
 import { AddItemModal } from '../components/AddItemModal';
-import { orderService } from '../services/orderService';
 import { useState } from 'react';
 import {
   Table,
@@ -14,36 +13,22 @@ import {
   TableRow,
   Chip,
 } from '@mui/material';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNotifications } from '../contexts/NotificationContext';
 import { useMediaQuery, useTheme } from '@mui/material';
+import { useGetOrder, useMarkAsPaidMutation } from '../hooks/useOrder';
 
 export function OrderDetail() {
   const { orderId } = useParams();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [open, setOpen] = useState(false);
-  const queryClient = useQueryClient();
-  const { showSuccess, showError } = useNotifications();
 
-  const markAsPaidMutation = useMutation({
-    mutationFn: (orderId: number) => orderService.markOrderAsPaid(orderId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['orders', orderId] });
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-      showSuccess('Orden marcada como pagada');
-    },
-    onError: () => showError('Error al actualizar el estado'),
-  });
+  const { mutateAsync: markAsPaidMutation } = useMarkAsPaidMutation();
 
   const {
     data: order,
     isLoading,
     isError,
-  } = useQuery<Order>({
-    queryKey: ['orders', orderId],
-    queryFn: () => orderService.getOrder(Number(orderId)),
-  });
+  } = useGetOrder(Number(orderId)) as UseQueryResult<IOrder, Error>;
 
   if (isLoading) return <Typography>Loading...</Typography>;
   if (isError) return <Typography>Error loading order</Typography>;
@@ -82,7 +67,7 @@ export function OrderDetail() {
             <Button
               variant="contained"
               color="success"
-              onClick={() => markAsPaidMutation.mutate(Number(orderId))}
+              onClick={() => markAsPaidMutation(Number(orderId))}
             >
               Marcar como pagada
             </Button>
