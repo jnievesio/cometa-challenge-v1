@@ -50,18 +50,6 @@ Archivo que maneja diferentes entornos:
   }
 }
 ```
-Actualizar los valores según el entorno de despliegue.
-│   ├── src/
-│   │   ├── components/       # Componentes reutilizables
-│   │   ├── pages/            # Vistas/páginas
-│   │   ├── services/         # Clientes API
-│   │   ├── contexts/         # Estado global (React Context)
-│   │   └── styles/           # Tailwind CSS y temas
-│   ├── package.json          
-│   └── tsconfig.json         
-├── .gitignore                
-└── README.md                
-```
 
 ## 🚀 Tecnologías Principales
 
