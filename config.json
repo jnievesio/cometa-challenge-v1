@@ -8,5 +8,15 @@
       "host": "http://localhost:8000",
       "port": 8000
     }
+  },
+  "production": {
+    "frontend": {
+      "url": "http://localhost:5173",
+      "api_url": "http://localhost:8000/api"
+    },
+    "backend": {
+      "host": "http://localhost:8000",
+      "port": 8000
+    }
   }
 }

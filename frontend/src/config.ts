@@ -1,4 +1,4 @@
-import config from '../../config.json';
+import config from '@config';
 
 type Environment = 'development' | 'production';
 
@@ -16,7 +16,7 @@ type ConfigType = {
   };
 };
 
-const env = import.meta.env.MODE as Environment;
+const env = (import.meta.env.VITE_ENV || import.meta.env.MODE) as Environment;
 export const CONFIG = (config as ConfigType)[env];
 
-export const API_URL = CONFIG.frontend.api_url;
+export const API_URL = import.meta.env.VITE_API_URL || CONFIG.frontend.api_url;
