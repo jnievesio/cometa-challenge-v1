@@ -1,0 +1,46 @@
+# Dependencies
+node_modules
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Development files
+.git
+.gitignore
+.vscode
+.idea
+*.swp
+*.swo
+
+# Build and cache
+dist
+build
+*.egg-info/
+.eggs/
+.pytest_cache/
+.coverage
+coverage.xml
+*.log
+npm-debug.log*
+
+# Documentation
+README.md
+DOCS.md
+LICENSE
+
+# Test files
+tests/
+test/
+__tests__/
+
+# Other
+.DS_Store
+Demostracion.mp4
