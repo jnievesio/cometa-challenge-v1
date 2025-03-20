@@ -66,6 +66,8 @@ Archivo que maneja diferentes entornos:
 
 ## 🔧 Instalación y Uso
 
+### Desarrollo Local
+
 1. **Requisitos previos**
    - Node.js 18.x
    - Python 3.10+
@@ -88,9 +90,38 @@ npm run dev
 4. **Ejecución conjunta** (usando Concurrently):
 ```bash
 npm install -g concurrently
-
 npm run start
 ```
+
+### Desarrollo con Docker para desarrollo (reload)
+
+1. **Requisitos previos**
+   - Docker
+   - Docker Compose
+
+2. **Configuración**
+   - Copia el archivo `.env.example` a `.env` en la raíz del proyecto
+   - Ajusta las variables de entorno según sea necesario
+
+3. **Construcción y ejecución**
+```bash
+# Construir y levantar los contenedores
+docker-compose -f docker-compose.dev.yml up --build
+
+# Ejecutar en segundo plano
+docker-compose -f docker-compose.dev.yml up -d
+
+# Detener los contenedores
+docker-compose -f docker-compose.dev.yml down
+```
+
+4. **Acceso**
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:8000
+
+5. **Desarrollo**
+   - Los cambios en el código se reflejan automáticamente gracias a los volúmenes montados
+   - Hot-reloading está habilitado tanto en frontend como en backend
 ## 🏛️ Arquitectura y Patrones
 
 ### Backend (FastAPI)
