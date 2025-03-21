@@ -91,7 +91,7 @@ export function useAddItemMutation(orderId: number, onClose?: () => void) {
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useNotifications();
 
-  return useMutation<IOrder, AxiosError<{ detail?: string; message?: string }>, INewItem>({ 
+  return useMutation<IOrder, AxiosError<{ detail?: string; message?: string }>, INewItem>({
     mutationFn: async (newItem: INewItem) => {
       return await orderService.addItem(orderId, newItem);
     },
