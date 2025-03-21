@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { AddItemModal } from '../components/AddItemModal';
+import { ConfirmModal } from '../components/ConfirmModal';
 import { useMediaQuery, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
@@ -28,6 +29,8 @@ import { IOrder } from '../types/order';
 export default function OrderList() {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState<number | null>(null);
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -38,8 +41,15 @@ export default function OrderList() {
   const { mutateAsync: deleteOrderMutation } = useDeleteOrderMutation();
 
   const handleDelete = (orderId: number) => {
-    if (confirm('¿Está seguro que desea eliminar esta orden?')) {
-      deleteOrderMutation(orderId);
+    setOrderToDelete(orderId);
+    setConfirmDeleteOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (orderToDelete) {
+      deleteOrderMutation(orderToDelete);
+      setConfirmDeleteOpen(false);
+      setOrderToDelete(null);
     }
   };
 
@@ -167,6 +177,17 @@ export default function OrderList() {
           orderId={selectedOrderId}
         />
       )}
+
+      <ConfirmModal
+        open={confirmDeleteOpen}
+        title="Confirmar eliminación"
+        message="¿Está seguro que desea eliminar esta orden?"
+        onConfirm={handleConfirmDelete}
+        onClose={() => {
+          setConfirmDeleteOpen(false);
+          setOrderToDelete(null);
+        }}
+      />
     </>
   );
 }
